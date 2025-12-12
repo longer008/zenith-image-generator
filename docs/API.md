@@ -2,22 +2,22 @@
 
 ## Base URL
 
-部署后的 API 地址：
+API endpoints after deployment:
 - Cloudflare Pages: `https://your-project.pages.dev/api`
 - Vercel: `https://your-project.vercel.app/api`
 - Netlify: `https://your-project.netlify.app/api`
 
 ## `POST /api/generate`
 
-统一的图片生成接口，支持多个 AI Provider。
+Unified image generation endpoint supporting multiple AI providers.
 
 **Headers:**
 
 ```
 Content-Type: application/json
 X-API-Key: your-gitee-ai-api-key      # Gitee AI
-X-HF-Token: your-huggingface-token    # HuggingFace (可选)
-X-MS-Token: your-modelscope-token     # ModelScope (可选)
+X-HF-Token: your-huggingface-token    # HuggingFace (optional)
+X-MS-Token: your-modelscope-token     # ModelScope (optional)
 ```
 
 **Request Body:**
@@ -62,21 +62,21 @@ X-MS-Token: your-modelscope-token     # ModelScope (可选)
 ### Gitee AI
 - **Header**: `X-API-Key`
 - **Models**: `z-image-turbo`
-- **获取 API Key**: [ai.gitee.com](https://ai.gitee.com)
+- **Get API Key**: [ai.gitee.com](https://ai.gitee.com)
 
 ### HuggingFace
-- **Header**: `X-HF-Token` (可选，无 token 有速率限制)
+- **Header**: `X-HF-Token` (optional, rate limited without token)
 - **Models**: `flux-schnell`, `stable-diffusion-3.5-large`
-- **获取 Token**: [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
+- **Get Token**: [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
 
 ### ModelScope
 - **Header**: `X-MS-Token`
 - **Models**: `flux-schnell`
-- **获取 Token**: [modelscope.cn](https://modelscope.cn)
+- **Get Token**: [modelscope.cn](https://modelscope.cn)
 
 ## `POST /api/generate-hf` (Legacy)
 
-HuggingFace 专用接口（向后兼容）。
+HuggingFace-specific endpoint (backward compatible).
 
 **Headers:**
 
