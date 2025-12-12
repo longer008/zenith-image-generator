@@ -3,7 +3,8 @@
 # Deploys frontend with Netlify Functions for API
 
 [build]
-  command = "pnpm build:shared && pnpm build:web"
+  base = "apps/web"
+  command = "cd ../.. && pnpm build:shared && pnpm build:web"
   publish = "dist"
   functions = "netlify/functions"
 
@@ -53,7 +54,7 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-  included_files = ["../api/src/**/*", "../packages/shared/dist/**/*"]
+  included_files = ["../../../api/src/**/*", "../../../packages/shared/dist/**/*"]
 
 # Environment variables (set in Netlify dashboard)
 [context.production.environment]

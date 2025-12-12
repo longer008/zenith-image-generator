@@ -8,8 +8,10 @@
 import {
   type GenerateRequest,
   HF_SPACES,
+  MODEL_CONFIGS,
   PROVIDER_CONFIGS,
   type ProviderType,
+  getModelsByProvider,
   isAllowedImageUrl,
   validateDimensions,
   validatePrompt,
@@ -23,24 +25,34 @@ import { getProvider, hasProvider } from './providers'
 /** Extract complete event data from SSE stream */
 function extractCompleteEventData(sseStream: string): unknown {
   const lines = sseStream.split('\n')
-  let isCompleteEvent = false
+  let currentEvent = ''
 
   for (const line of lines) {
     if (line.startsWith('event:')) {
-      const eventType = line.substring(6).trim()
-      if (eventType === 'complete') {
-        isCompleteEvent = true
-      } else if (eventType === 'error') {
-        throw new Error('Quota exhausted, please set HF Token')
-      } else {
-        isCompleteEvent = false
-      }
-    } else if (line.startsWith('data:') && isCompleteEvent) {
+      currentEvent = line.substring(6).trim()
+    } else if (line.startsWith('data:')) {
       const jsonData = line.substring(5).trim()
-      return JSON.parse(jsonData)
+      if (currentEvent === 'complete') {
+        return JSON.parse(jsonData)
+      }
+      if (currentEvent === 'error') {
+        // Parse actual error message from data
+        try {
+          const errorData = JSON.parse(jsonData)
+          const errorMsg =
+            errorData?.error || errorData?.message || JSON.stringify(errorData) || 'Unknown error'
+          throw new Error(errorMsg)
+        } catch (e) {
+          if (e instanceof SyntaxError) {
+            throw new Error(jsonData || 'Unknown SSE error')
+          }
+          throw e
+        }
+      }
     }
   }
-  throw new Error(`No complete event in response: ${sseStream.substring(0, 200)}`)
+  // No complete/error event found, show raw response for debugging
+  throw new Error(`Unexpected SSE response: ${sseStream.substring(0, 300)}`)
 }
 
 /** Call Gradio API for upscaling */
@@ -90,6 +102,42 @@ export function createApp(config: AppConfig = {}) {
   // Health check
   app.get('/', (c) => {
     return c.json({ message: 'Z-Image API is running' })
+  })
+
+  // Get all providers
+  app.get('/providers', (c) => {
+    const providers = Object.values(PROVIDER_CONFIGS).map((p) => ({
+      id: p.id,
+      name: p.name,
+      requiresAuth: p.requiresAuth,
+      authHeader: p.authHeader,
+    }))
+    return c.json({ providers })
+  })
+
+  // Get models by provider
+  app.get('/providers/:provider/models', (c) => {
+    const provider = c.req.param('provider') as ProviderType
+    if (!PROVIDER_CONFIGS[provider]) {
+      return c.json({ error: `Invalid provider: ${provider}` }, 400)
+    }
+    const models = getModelsByProvider(provider).map((m) => ({
+      id: m.id,
+      name: m.name,
+      features: m.features,
+    }))
+    return c.json({ provider, models })
+  })
+
+  // Get all models
+  app.get('/models', (c) => {
+    const models = MODEL_CONFIGS.map((m) => ({
+      id: m.id,
+      name: m.name,
+      provider: m.provider,
+      features: m.features,
+    }))
+    return c.json({ models })
   })
 
   // Unified generate endpoint

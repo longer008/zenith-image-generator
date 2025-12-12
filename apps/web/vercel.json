@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm build:shared && pnpm build:web",
+  "buildCommand": "cd ../.. && pnpm build:shared && pnpm build:web",
   "outputDirectory": "dist",
   "framework": "vite",
   "installCommand": "pnpm install",
@@ -16,7 +16,10 @@
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, X-API-Key, X-HF-Token, X-MS-Token" }
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, X-API-Key, X-HF-Token, X-MS-Token"
+        }
       ]
     }
   ]

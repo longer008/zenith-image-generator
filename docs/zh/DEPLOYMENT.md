@@ -104,6 +104,15 @@ vercel --prod
 在 Vercel Dashboard 设置：
 - `CORS_ORIGINS`: 允许的 CORS 源（可选）
 
+### ⚠️ 超时限制
+
+Vercel Edge Functions 免费版超时限制为 25 秒。在 Flow 模式下同时生成多张图片可能会触发 `504 Gateway Timeout` 错误。
+
+解决方案：
+- **升级 Pro 计划**：可将超时时间增加到 60 秒
+- **使用 Cloudflare Pages**：超时限制更宽松，推荐用于图片生成场景
+- **减少并发**：Flow 模式下减少同时生成的图片数量
+
 ---
 
 ## 三、Netlify
@@ -138,6 +147,19 @@ netlify deploy --prod
 ## 四、Cloudflare Workers (独立 API)
 
 将 API 单独部署到 Cloudflare Workers。
+
+### 方式 1：通过 Dashboard（推荐）
+
+1. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com)
+2. 进入 **Workers & Pages** > **Create** > **Worker** > **Import from Git**
+3. 连接 GitHub 仓库
+4. 配置构建设置：
+   - **Build command**: `cd ../.. && pnpm build:shared && pnpm build:api`
+   - **Deploy command**: `npx wrangler deploy`
+   - **Root directory**: `apps/api`
+5. 非生产分支部署命令（可选）：`npx wrangler versions upload`
+
+### 方式 2：通过 CLI
 
 ```bash
 cd apps/api

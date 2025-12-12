@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.5.0] - 2025-12-12
+
+### Added
+- Multi-platform deployment support (Cloudflare Pages, Vercel, Netlify)
+- ModelScope provider integration
+- Provider-first model selection with per-provider token storage
+- API usage examples (cURL, JavaScript, Python) in documentation
+
+### Changed
+- Updated deployment configurations for all platforms
+- Enhanced API documentation with multi-provider support
+- Improved README with deployment badges
+
+### Fixed
+- Cloudflare Pages Functions configuration
+- Vercel Edge Functions timeout documentation
+- Various TypeScript import issues
+
 ## [0.4.1] - 2025-12-09
 
 ### Changed
