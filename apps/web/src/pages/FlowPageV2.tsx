@@ -464,7 +464,7 @@ function FlowCanvas() {
             className="flex items-center gap-2 px-3 py-1.5 border border-zinc-700 rounded-lg text-zinc-400 hover:text-zinc-200 hover:border-zinc-600 transition-colors"
           >
             <Github className="w-4 h-4" />
-            <span className="text-sm">GitHub</span>
+            <span className="text-sm"></span>
           </a>
           <LanguageSwitcher />
         </div>
